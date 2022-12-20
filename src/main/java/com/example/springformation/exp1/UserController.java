@@ -1,5 +1,6 @@
 package com.example.springformation.exp1;
 
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -11,46 +12,41 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.List;
 
 @RestController
-//@Scope("request")
-//@ConditionalOnProperty(value = "test", havingValue = "true")
-//@Primary
-//@Component
-@ConditionalOnMissingBean(UserDAO.class)
 public class UserController {
 
+    @Autowired
     private UserService userService ;
 
-    @Autowired
-    ApplicationContext context ;
-    @PostConstruct
-    public void init(){
-        System.out.println();
+    @GetMapping("/users")
+    public List<User> getUsers(){
+        return userService.getUsers() ;
     }
 
-    public UserController(){
-        System.out.println("instantiated");
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable("id") Integer id){
+        return userService.getUserById(id) ;
     }
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        System.out.println("dependencies injected");
-        this.userService = userService;
+    @PostMapping("/users")
+    public User createUser(@RequestBody User user){
+        return userService.createUser(user);
     }
 
-    @PreDestroy
-    public void destroty(){
-        System.out.println();
+
+    @PutMapping("/users")
+    public User updateUser(@RequestBody User user){
+        return userService.updateUser(user);
     }
 
-    @GetMapping("/")
-    public String test(){
-        return "Hello";
+    @DeleteMapping("/users/{id}")
+    public boolean updateUser(@PathVariable("id") Integer id){
+        return userService.deleteUser(id);
     }
 }
